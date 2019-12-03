@@ -1,0 +1,11 @@
+{
+	"require": {
+		"gabordemooij/redbean": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"core\\": "core/",
+			"form\\controller\\": "apps/form/controller/"
+		}
+	}
+}
