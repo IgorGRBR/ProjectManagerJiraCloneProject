@@ -56,12 +56,24 @@ let validate_not_checked = function(input) {
     return !input.prop('checked');
 }
 
-let validate_edrpou = function(val) {
-    let re = /^\d{8}$/;
+let validate_login_len = function(val) {
+    return val.length >= 6 && val.length <= 20;
+ }
+
+let validate_login_syn = function(val) {
+    let re = /^[a-z0-9]+$/i; 
     return re.test(String(val));
 }
 
-let validate_ipn = function(val) {
-    let re = /^\d{10}$/;
-    return re.test(String(val));
-}
+let validate_password_len = function(val) {
+    return val.length >= 6 && val.length <= 20;
+ }
+
+ let validate_password_syn = function(val) {
+     let re = /^[a-z0-9]+$/i; 
+     return re.test(String(val));
+ }
+
+ let validate_password_con = function(val1, val2) {
+     return val1 === val2;
+ }

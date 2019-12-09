@@ -18,12 +18,15 @@ class sign extends controller {
         $login    = $_POST['login'];
         $password = $_POST['password'];
         
-        signer::sign_in($login, $password);
+        $res = signer::sign_in($login, $password);
 
         if (signer::is_in()) {
             header('HTTP/1.1 200');
+            exit;
         } else {
             header('HTTP/1.1 401');
+            echo json_encode($res);
+            exit;
         }
     }
 
@@ -45,9 +48,8 @@ class sign extends controller {
         $email      = $_POST['email'];
         $password   = $_POST['password'];
         $confirm    = $_POST['confirm'];
-        $agreement  = $_POST['agreement'];
 
-        $register = signer::validate_registration($login, $email, $password, $confirm, $agreement);
+        $register = signer::validate_registration($login, $email, $password, $confirm);
 
         if ($register === true) {
             header('HTTP/1.1 200');

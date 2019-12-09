@@ -30,7 +30,6 @@
                         <input class="form-control btn-block" id="password" type="password" name="password" required>
                         <p class="text-danger text-center"><small id="password_error"></small></p>
                         <p class="text-danger text-center"><small id="error"></small></p>
-                        <small class="text-center p-0 m-0"><a href="/form/sign/recover">Забули пароль ?</a></small>
                         <hr>
                         <button class="btn btn-danger btn-md btn-block mt-3" id="submit" type="submit">Увійти</button>
                         <br>
@@ -69,9 +68,11 @@
 
             $.post( "/form/sign/in", 
             { login: login_val, password: password_val }, 
-            () => {
-               location.href = '/form';
-            }).fail(() => {
+            function ()  {
+                location.href = '/form';
+            }).fail(function(errors){
+                errors = JSON.parse(errors.responseText);
+                console.log(errors);
                 error.text('Невірний логін або пароль');
                 login.removeClass('border-success');
                 password.removeClass('border-success');
