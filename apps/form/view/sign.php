@@ -56,12 +56,29 @@
         let password_val  = password.val();
 
         let valid = true;
+
+        if (!validate_login_len(login_val)) {
+            valid = set_error_msg (login, login_error, 'Логін має бути довжиною від 6 до 20 символів');
+        }
+
+        if (!validate_login_syn(login_val)) {
+            valid = set_error_msg (login, login_error, 'Логін має складатися лише з цифр та / або латинських букв');
+        }
+
         if (validate_empty(login_val.replace(/\s/g,''))) {
-            valid = set_error_msg(login, login_error, 'Введіть логін', () => {error.text('')});
+            valid = set_error_msg(login, login_error, '');
+        }
+
+        if (!validate_password_len(password_val)) {
+            valid = set_error_msg (password, password_error, 'Пароль має бути довжиною від 6 до 20 символів');
+        }
+
+        if (!validate_password_syn(password_val)) {
+            valid =  set_error_msg (password, password_error, 'Пароль має складатися лише з цифр та / або латинських букв');
         }
 
         if (validate_empty(password_val.replace(/\s/g,''))) {
-            valid = set_error_msg(password, password_error, 'Введіть пароль',  () => {error.text('')});
+            valid = set_error_msg(password, password_error, '');
         }
 
         if (valid) {
@@ -72,24 +89,24 @@
                 location.href = '/form';
             }).fail(function(errors){
                 errors = JSON.parse(errors.responseText);
-                console.log(errors);
-                error.text('Невірний логін або пароль');
+                error.text(errors['login']);
                 login.removeClass('border-success');
                 password.removeClass('border-success');
+                password.addClass('border-danger');
+                password.val('');
             });
 
         }
         return false;
     });
 
-    change_update_error_msg(login, login_error,    
-    () => { 
-        return validate_not_empty(login.val().replace(/\s/g,''));
-    });
+    change_update_error_msg(login, login_error, 
+    () => { return validate_login_len(login.val()) && validate_login_syn(login.val()); });
 
-    change_update_error_msg(password, password_error, () => { 
-        return validate_not_empty(password.val().replace(/\s/g,''));
-    });
+    change_update_error_msg(password, password_error,
+    () => { return validate_password_len(password.val()) && validate_password_syn(password.val()); },
+    () => { return false; });
+
 </script>
 <footer class="bg-dark text-secondary footer">
     <div class="container">

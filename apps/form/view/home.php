@@ -3,33 +3,8 @@
 $href_user_page = "form/user/";
 $href_task_page = "form/task/";
 
-$user =
-[
-    "login" => "dartal5",
-    "status" => "2",
-    "name" => "Dymchenko Olekisy",
-    "owns" => 
-    [
-        [
-            "id" => "1",
-            "name" => "Create frontend",
-            "type" => "Feature",
-            "priority" => "1",
-            "requester" => ["god" => "Jesus Christ"],
-            "owners" => ["dartal5" => "Dymchenko Oleksiy"],
-        ],
-        [
-            "id" => "2",
-            "name" => "Create backend",
-            "type" => "Feature",
-            "priority" => "2",
-            "requester" => ["god" => "Jesus Christ"],
-            "owners" => ["dartal5" => "Dymchenko Oleksiy", "grabar" => "Ihor Grabar"]
-        ]
-    ]
-];
+$user = $data;
 ?>
-
 <html>
     <head>
         <link rel="stylesheet" href="/public/css/bootstrap.min.css" />
@@ -57,7 +32,7 @@ $user =
 </nav>
         <br>
         <div class="container">
-            <h4>Welcom <?=$user["name"]?>!<h4>
+            <h4>Welcome <?=$user["login"]?>!<h4>
             <hr>
             <table class="table">
                 <thead>
@@ -73,20 +48,42 @@ $user =
                 <tbody>
                 <?php foreach($user["owns"] as $task) { ?>
                     <tr>
-                    <td scope="row">Create frontend</td>
+                    <td scope="row"><?=$task['name']?></td>
                     <td><?=$task["type"]?></td>
                     <td><?=$task["priority"]?></td>
-                    <td><a href="<?=$href_user_page . "?user=" . array_keys ($task["requester"])[0]?>"><?=$task["requester"][array_keys ($task["requester"])[0]]?></a></td>
+
+                    <td>
+                    <?php
+                    $i = 0;
+                    if($task["requester"] != NULL) {
+                    $len = $task["requester"] ;
+                    
+                        foreach($task["requester"] as $o) { 
+                                foreach($o as $k=>$v) { 
+                        ?>
+                            <a href="<?=$href_user_page . "?user=" . array_keys ($o)[0]?>"><?=$o[array_keys ($o)[0]]?></a>
+                        <?php 
+                            ++$i;
+                            } 
+                        }
+                    }
+                    ?>
+                    </td>
                     <td>
                     <?php 
                     $i = 0;
+                    if($task["owners"] != NULL) {
                     $len = count($task["owners"]);
-                    foreach($task["owners"] as $k=>$v) { 
-                    ?>
-                        <a href="<?=$href_user_page . "?user=" . $k?>"><?=$v?></a><?= empty($task["owners"]) || $i === $len - 1? "" : ","?>
-                    <?php 
-                        ++$i;
-                    } 
+                    
+                        foreach($task["owners"] as $o) { 
+                            foreach($o as $k=>$v) { 
+                        ?>
+                            <a href="<?=$href_user_page . "?user=" . $k?>"><?=$v?></a><?= empty($task["owners"]) || $i === $len - 1? "" : ","?>
+                        <?php 
+                            ++$i;
+                        } 
+                    }
+                    }
                     ?>
                     </td>
                     <td><a href="<?=$href_task_page . "?task=" . $task["id"]?>">O</a></td>

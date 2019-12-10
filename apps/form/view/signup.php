@@ -31,7 +31,7 @@
                     <form class="form-group">
                         <!--Login-->
                         <label for="login" class="text-center">Логін</label>
-                        <input class="form-control btn-block" id="login" name="login" required maxlength="10">
+                        <input class="form-control btn-block" id="login" name="login" required minlength="6" maxlength="20">
                         <p class="text-danger text-center"><small id="login_error"></small></p>
                         <!--Email-->
                         <label for="email" class="text-center">Електронна адреса</label>
@@ -94,69 +94,61 @@
 
         let valid = true;
         if (!validate_login_len(login_val)) {
-            set_error_msg (login, login_error, 'Логін має бути довжиною від 6 до 20 символів');
-            valid = false;
+            valid = set_error_msg (login, login_error, 'Логін має бути довжиною від 6 до 20 символів');
         }
 
         if (!validate_login_syn(login_val)) {
-            set_error_msg (login, login_error, 'Логін має складатися лише з цифр та / або латинських букв');
-            valid = false;
+            valid = set_error_msg (login, login_error, 'Логін має складатися лише з цифр та / або латинських букв');
         }
 
-        if (validate_not_email(email_val)) {
-            set_error_msg (email, email_error, 'Введіть пошту правильно');
-            valid = false;
+        if (!validate_email(email_val)) {
+            valid = set_error_msg (email, email_error, 'Введіть пошту правильно');
         }
 
         if (!validate_password_len(password_val)) {
-            set_error_msg (password, password_error, 'Пароль має бути довжиною від 6 до 20 символів');
-            valid = false;
+            valid = set_error_msg (password, password_error, 'Пароль має бути довжиною від 6 до 20 символів');
         }
 
         if (!validate_password_syn(password_val)) {
-            set_error_msg (password, password_error, 'Пароль має складатися лише з цифр та / або латинських букв');
-            valid = false;
+            valid =  set_error_msg (password, password_error, 'Пароль має складатися лише з цифр та / або латинських букв');
         }
 
-        if(validate_not_empty(confirm_val) && !validate_password_con(password_val, confirm_val)) {
-            set_error_msg (confirm, confirm_error, 'Паролі мають співпадати');
-            valid = false;
+        if(!validate_empty(confirm_val) && !validate_password_con(password_val, confirm_val)) {
+            valid = set_error_msg (confirm, confirm_error, 'Паролі мають співпадати');
+        }
+
+        if(!validate_password_con(password_val, confirm_val) && !validate_empty(password_val)) {
+            valid = set_error_msg (confirm, confirm_error, 'Неправильно повторено пароль');
         }
 
         values.forEach(function(el) { 
             if (validate_empty(el['val'])) {
-                set_error_msg(el['input'], el['error'], '');
-                valid = false;
+                valid = set_error_msg(el['input'], el['error'], '');
             }
         });
 
-        if(!validate_password_con(password_val, confirm_val) && validate_not_empty(password_val)) {
-            set_error_msg (confirm, confirm_error, 'Неправильно повторено пароль');
-            valid = false;
-        }
-
         if (valid) {
 
-            if (validate_not_empty(login_val) && validate_not_empty(password_val)) {
+            if (!validate_empty(login_val) && !validate_empty(password_val)) {
                 $.post( "/form/sign/register", 
                 { login: login_val, email: email_val, password: password_val, confirm: confirm_val }, 
                 () => {
                     location.href = '/form/';
                 }).fail(function (errors) {
                     errors = JSON.parse(errors.responseText);
-                    if (validate_not_empty(errors['login'])) {
+  
+                    if (typeof errors['login'] !== 'undefined') {
                         set_error_msg(login, login_error, errors['login']);
                     }
-
-                    if (validate_not_empty(errors['email'])) {
+                    if (typeof errors['email'] !== 'undefined') {
                         set_error_msg(email, email_error, errors['email']);
                     }
 
-                    if (validate_not_empty(errors['password'])) {
+                    if (typeof errors['password'] !== 'undefined') {
                         set_error_msg(password, password_error, errors['password']);
                     }
 
-                    if (validate_not_empty(errors['confirm'])) {
+                    if (typeof errors['confirm'] !== 'undefined') {
                         set_error_msg(confirm, confirm_error, errors['confirm']);
                     }
                 });
@@ -168,7 +160,7 @@
     });
 
     change_update_error_msg(login, login_error, 
-    () => { return validate_login_len(login.val()) || validate_login_syn(login.val()); });
+    () => { return validate_login_len(login.val()) && validate_login_syn(login.val()); });
 
     change_update_error_msg(email, email_error,
     () => { return validate_email(email.val()); });
